@@ -13,7 +13,6 @@ mod fsutils {
 mod error {
     pub enum Error {
         FileReadError(std::io::Error),
-        LexError(crate::tokens::LexError),
         ParseError(crate::ast::ParseError),
         RuntimeError(crate::interpret::RuntimeError),
     }
@@ -22,7 +21,6 @@ mod error {
         pub fn msg(&self) -> String {
             match *self {
                 Self::FileReadError(ref io_err) => io_err.to_string(),
-                Self::LexError(_) => "lexing error".to_string(),
                 Self::ParseError(_) => "parsing error".to_string(),
                 Self::RuntimeError(_) => "runtime error".to_string(),
             }
@@ -31,9 +29,6 @@ mod error {
 
     impl From<std::io::Error> for Error {
         fn from(e: std::io::Error) -> Self { Self::FileReadError(e) }
-    }
-    impl From<crate::tokens::LexError> for Error {
-        fn from(e: crate::tokens::LexError) -> Self { Self::LexError(e) }
     }
     impl From<crate::ast::ParseError> for Error {
         fn from(e: crate::ast::ParseError) -> Self { Self::ParseError(e) }
@@ -45,8 +40,7 @@ mod error {
 
 mod driver {
     pub fn run(contents: crate::fsutils::FileContents) -> Result<(), crate::error::Error> {
-        let tokens = crate::tokens::TokenStream::new(contents)?;
-        let ast = crate::ast::AST::new(tokens)?;
+        let ast = crate::ast::AST::new(contents)?;
         crate::interpret::interpret(ast)?;
 
         Ok(())
@@ -58,23 +52,12 @@ mod driver {
     }
 }
 
-mod tokens {
-    pub struct TokenStream;
-    pub struct LexError;
-
-    impl TokenStream {
-        pub fn new(contents: crate::fsutils::FileContents) -> Result<TokenStream, LexError> {
-            todo!();
-        }
-    }
-}
-
 mod ast {
     pub struct AST;
     pub struct ParseError;
 
     impl AST {
-        pub fn new(tokens: crate::tokens::TokenStream) -> Result<AST, ParseError> {
+        pub fn new(tokens: crate::fsutils::FileContents) -> Result<AST, ParseError> {
             todo!();
         }
     }
