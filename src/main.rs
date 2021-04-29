@@ -1,18 +1,35 @@
 mod fsutils {
-    struct FileContents(String);
-    struct FilePath(String);
+    pub struct FileContents(pub String);
+    pub struct FilePath(pub String);
 
-    fn read(path: FilePath) -> Result<FileContents, FileReadError> {
-        todo!();
+    pub fn read(path: FilePath) -> Result<FileContents, std::io::Error> {
+        match std::fs::read_to_string(path.0) {
+            Ok(o) => Ok(FileContents(o)),
+            Err(e) => Err(e),
+        }
     }
 }
+
+mod error {
+    pub enum Error {
+        FileReadError(std::io::Error),
+    }
+
+    impl From<std::io::Error> for Error {
+        fn from(io_err: std::io::Error) -> Self {
+            Self::FileReadError(io_err)
+        }
+    }
+}
+
 mod driver {
-    fn run(contents: fsutils::FileContents) -> bool {
+    pub fn run(contents: crate::fsutils::FileContents) -> Result<(), crate::error::Error> {
         todo!();
     }
 
-    fn read_and_run(path: fsutils::FilePath) -> Result<(), Error> {
-        todo!();
+    pub fn read_and_run(path: crate::fsutils::FilePath) -> Result<(), crate::error::Error> {
+        let contents = crate::fsutils::read(path)?;
+        run(contents)
     }
 }
 
