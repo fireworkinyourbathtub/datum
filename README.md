@@ -6,6 +6,7 @@ It can be summed up as a dynamically-typed pure-functional programming language,
 # Concepts
 
 datum is built around two concepts:
+
     - datums
     - reductions
 
